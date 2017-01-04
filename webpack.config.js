@@ -2,9 +2,8 @@ var path = require('path');
 
 module.exports = {
   entry: {
-    'client/dist/': './client/components/webIndex.js',
-    'extension/dist/content.': './extension/loader.js',
-    'extension/dist/background.': './extension/background.js'
+    'dist/content.': './loader.js',
+    'dist/background.': './background.js'
   },
   output: {
     path: __dirname,
