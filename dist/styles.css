@@ -1,0 +1,54 @@
+#spacer{
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  right: 0px;
+  top: 107px;
+  bottom: 0px;
+  width: 360px;
+  border-left: 2px solid rgb(233, 233, 233);
+  background-color: white;
+}
+
+#ext {
+  width: 360px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 200;
+  float: right;
+  height: 2000px;
+}
+
+.side-container {
+  /*background-color: #a0bbe8;*/
+  padding: 10px;
+  margin: 10px;
+  top: 0;
+  position: absolute;
+}
+
+.nav-tab {
+  display: inline-block;
+  width: 100px;
+  text-align: center;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.nav-tab:hover, .nav-tab-active {
+  background-color: red;
+  color: white;
+}
+
+.task-completed{
+  font-style: italic;
+}
+
+.task-overdue{
+  color: red;
+}
+
+.task-pending {
+  color: green;
+}
