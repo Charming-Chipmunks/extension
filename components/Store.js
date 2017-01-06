@@ -4,9 +4,13 @@ import { autorun, action, extendObservable } from 'mobx';
 class Store {
   constructor() {
     extendObservable(this, {
+      server: 'http://jobz.mooo.com:4000',
       currentUser: 'my user',
+      userId: '1',
 
-      currentTab: 'company',
+      currentTab: 'tasks',
+
+      currentEmail: {},
 
       params: {
         c: false,
@@ -59,7 +63,8 @@ class Store {
           actionDetails: 'Send a reply to OVERDUE'
         }]
       },
-      user: {}
+      user: {},
+      tasks: []
     });
   }
 }

@@ -27,6 +27,7 @@ var detectLoad = function() {
     setTimeout(detectLoad, 100);
   } else {
     $('.zA').on('click', function(e) {
+      alert('hi');
       var detectEmailLoad = function() {
         var fromDiv = document.getElementsByClassName('gD')[0];
         if (fromDiv) {
