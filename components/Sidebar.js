@@ -35,18 +35,44 @@ chrome.runtime.sendMessage({
   } else {
     // alert(res.data);
     Store.tasks = res.data;
-    console.log('Task data', Store.tasks);
   }
 });
+
+chrome.runtime.sendMessage({
+  action: 'GET',
+  url: Store.server + '/jobs/' + Store.userId + '/new'
+}, function(res) {
+  if (res.err) {
+    alert('error:' + err);
+  } else {
+    // alert(res.data);
+    Store.jobs = res.data;
+    console.log('Job data', Store.jobs);
+  }
+});
+
+var grabEmail = function() {
+  var fromDiv = document.getElementsByClassName('gD')[0];
+  if (fromDiv) {
+    Store.currentEmail = {
+      senderEmail: fromDiv.getAttribute('email'),
+      senderName: fromDiv.innerHTML
+    };
+  } else {
+    Store.currentEmail = {warning: 'Please open an email first.'};
+  }
+
+  Store.currentTab = 'email';
+};
 
 var Sidebar = observer((props) => {
   return (
     <div className='side-container'>
+      {(Store.currentTab !== 'email') && <button onClick={grabEmail}>Record this email</button>}
       <div>
         <h3 className={'nav-tab ' + (Store.currentTab === 'tasks' ? 'nav-tab-active' : '')} onClick={() => setTab('tasks')}>Tasks</h3>
         <h3 className={'nav-tab ' + (Store.currentTab === 'company' ? 'nav-tab-active' : '')} onClick={() => setTab('company')}>Company</h3>
         <h3 className={'nav-tab ' + (Store.currentTab === 'history' ? 'nav-tab-active' : '')} onClick={() => setTab('history')}>History</h3>
-        <h3 className={'nav-tab ' + (Store.currentTab === 'email' ? 'nav-tab-active' : '')} onClick={() => setTab('email')}>Email</h3>
       </div>
       {(Store.currentTab === 'company') && <Company />}
       {(Store.currentTab === 'history') && <History />}

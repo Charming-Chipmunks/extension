@@ -5,8 +5,6 @@ import Store from './Store.js';
 import mobx from 'mobx';
 import {observer} from 'mobx-react';
 
-console.log('HELLO HELLO HELLO');
-
 var Tasks = observer((props) => {
   console.log('my tasks');
   var tasks = Store.tasks.slice().map(record => mobx.toJS(record));
