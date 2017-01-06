@@ -7,6 +7,7 @@ import {observer} from 'mobx-react';
 import Company from './Company.js';
 import History from './History.js';
 import Tasks from './Tasks.js';
+import Emails from './Emails.js';
 
 var setTab = function(tab) {
   Store.currentTab = tab;
@@ -45,10 +46,12 @@ var Sidebar = observer((props) => {
         <h3 className={'nav-tab ' + (Store.currentTab === 'tasks' ? 'nav-tab-active' : '')} onClick={() => setTab('tasks')}>Tasks</h3>
         <h3 className={'nav-tab ' + (Store.currentTab === 'company' ? 'nav-tab-active' : '')} onClick={() => setTab('company')}>Company</h3>
         <h3 className={'nav-tab ' + (Store.currentTab === 'history' ? 'nav-tab-active' : '')} onClick={() => setTab('history')}>History</h3>
+        <h3 className={'nav-tab ' + (Store.currentTab === 'email' ? 'nav-tab-active' : '')} onClick={() => setTab('email')}>Email</h3>
       </div>
       {(Store.currentTab === 'company') && <Company />}
       {(Store.currentTab === 'history') && <History />}
       {(Store.currentTab === 'tasks') && <Tasks />}
+      {(Store.currentTab === 'email') && <Emails />}
     </div>
   );
 });

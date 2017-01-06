@@ -34,6 +34,22 @@ function(request, sender, sendResponse) {
 
     return true;
   }
+
+  if (request.action === 'POST') {
+    axios.post(request.url, request.data)
+    .then(function(data) {
+      sendResponse({
+        data: data.data
+      });
+    })
+    .catch(function(err) {
+      sendResponse({
+        err: err
+      });
+    });
+
+    return true;
+  }
 });
 
 // chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {

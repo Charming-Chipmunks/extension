@@ -10,6 +10,8 @@ class Store {
 
       currentTab: 'tasks',
 
+      currentEmail: {},
+
       params: {
         c: false,
         python: false,
