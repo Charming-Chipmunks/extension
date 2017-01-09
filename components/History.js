@@ -15,7 +15,7 @@ var History = observer((props) => {
     //TODO: update database
     var i = history.indexOf(record);
     var newTask = Object.create(record);
-    newTask.completedTime = new Date().toISOString().slice(0, 19).replace(/T/, ' ');
+    newTask.completedTime = new Date().toDateTime();
     Store.job.history[i] = newTask;
   };
 
@@ -73,7 +73,7 @@ var History = observer((props) => {
               <div>{record.actionDetails}</div>
               <hr />
             </div>
-          )
+          );
         })}
       </div>
     </div>

@@ -20,9 +20,7 @@ chrome.runtime.sendMessage({
   if (res.err) {
     alert('error:' + err);
   } else {
-    // alert(res.data);
     Store.user = res.data;
-    // console.log('store', Store.user);
   }
 });
 
@@ -33,7 +31,6 @@ chrome.runtime.sendMessage({
   if (res.err) {
     alert('error:' + err);
   } else {
-    // alert(res.data);
     Store.tasks = res.data;
   }
 });
@@ -45,7 +42,6 @@ chrome.runtime.sendMessage({
   if (res.err) {
     alert('error:' + err);
   } else {
-    // alert(res.data);
     Store.jobs = res.data;
     console.log('Job data', Store.jobs);
   }

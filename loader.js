@@ -4,6 +4,10 @@ import Sidebar from './components/Sidebar.js';
 import Store from './components/Store.js';
 import $ from 'jquery';
 
+Date.prototype.toDateTime = function() {
+  return this.toISOString().replace(/T/, ' ').slice(0, 19);
+};
+
 var insertWhenReady = function() {
   var emails = document.getElementsByClassName('Tm')[0];
   if (emails) {
@@ -26,21 +30,52 @@ var detectLoad = function() {
   if (loading.getAttribute('style') !== 'display: none;') {
     setTimeout(detectLoad, 100);
   } else {
-    $('.zA').on('click', function(e) {
-      alert('hi');
-      var detectEmailLoad = function() {
-        var fromDiv = document.getElementsByClassName('gD')[0];
-        if (fromDiv) {
-          //EMAIL LOADED
-          console.log('FROM', document.getElementsByClassName('gD')[0].getAttribute('email'))
-        } else {
-          setTimeout(detectEmailLoad, 100);
-        }
-      }
-      detectEmailLoad();
-    });
+    var table = document.getElementsByClassName('zt')[0];
+    if (table) {
+      $(table).on('click', '.zA', function(e) {
+        var detectEmailLoad = function() {
+          var fromDiv = document.getElementsByClassName('gD')[0];
+          if (fromDiv) {
+            //EMAIL LOADED
+            $('.lS').on('click', function(e) {
+              Store.currentTab = 'tasks';
+            });
+
+            var timeSpans = document.getElementsByClassName('g3');
+            Store.currentEmail = {
+              senderEmail: fromDiv.getAttribute('email'),
+              senderName: fromDiv.innerHTML,
+              time: new Date(timeSpans[timeSpans.length - 1].title.replace(/at /, ' ')).toDateTime()
+            };
+            
+            Store.currentContact = {};
+            Store.currentJobTasks = [];
+            chrome.runtime.sendMessage({
+              action: 'GET',
+              url: `${Store.server}/contacts/jobs/${encodeURIComponent(Store.currentEmail.senderEmail)}/${Store.userId}`
+            }, function(res) {
+              if (res.err) {
+                Store.currentContact = {};
+                console.log('error loading contact', res.err);
+              } else {
+                Store.currentContact = res.data;
+                console.log('contact data', Store.currentContact);
+              }
+            });
+            
+            Store.currentTab = 'email';
+          } else {
+            setTimeout(detectEmailLoad, 100);
+          }
+        };
+        detectEmailLoad();
+      });
+      Store.emailRowClickSet = true;
+    } else {
+
+    }
   }
-}
+};
 
 detectLoad();
 
