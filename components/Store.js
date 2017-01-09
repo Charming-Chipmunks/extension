@@ -8,9 +8,15 @@ class Store {
       currentUser: 'my user',
       userId: '1',
 
+      tableRowListenersEnabled: false,
+
       currentTab: 'tasks',
 
       currentEmail: {},
+
+      currentContact: {},
+
+      currentJobTasks: [],
 
       params: {
         c: false,
@@ -24,6 +30,7 @@ class Store {
       },
 
       companyList: [{name: 'Airbnb'}, {name: 'SomeOtherCompany'}],
+
       company: {
         name: 'Airbnb',
         location: '888 Brannan St, San Francisco, CA 94103',
@@ -32,11 +39,21 @@ class Store {
       },
       contacts: [
         {
+          id: 1,
+          companyId: 1,
           name: 'Sandy Knox',
           email: 'sandyk@airbnb.com'
         }, {
+          id: 2,
+          companyId: 1,
           name: 'Knox Sandy',
           email: 'knoxs@airbnb.com'
+        },
+        {
+          id: 3,
+          companyId: 2,
+          name: 'Erik',
+          email: 'communication@hackreactor.com'
         }
       ],
       job: {

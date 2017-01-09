@@ -2,7 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Sidebar from './components/Sidebar.js';
 import Store from './components/Store.js';
+import utils from './changeViews.js';
 import $ from 'jquery';
+
+Date.prototype.toDateTime = function() {
+  return this.toISOString().replace(/T/, ' ').slice(0, 19);
+};
 
 var insertWhenReady = function() {
   var emails = document.getElementsByClassName('Tm')[0];
@@ -26,39 +31,17 @@ var detectLoad = function() {
   if (loading.getAttribute('style') !== 'display: none;') {
     setTimeout(detectLoad, 100);
   } else {
-    $('.zA').on('click', function(e) {
-      alert('hi');
-      var detectEmailLoad = function() {
-        var fromDiv = document.getElementsByClassName('gD')[0];
-        if (fromDiv) {
-          //EMAIL LOADED
-          console.log('FROM', document.getElementsByClassName('gD')[0].getAttribute('email'))
-        } else {
-          setTimeout(detectEmailLoad, 100);
-        }
-      }
-      detectEmailLoad();
-    });
+    var table = document.getElementsByClassName('zt')[0];
+    var fromDiv = document.getElementsByClassName('gD')[0];
+    if (table) {
+      utils.addTableRowListeners();
+    } else if (fromDiv) {
+      utils.openEmail();
+    }
   }
-}
+};
 
 detectLoad();
-
-// var observer = new MutationObserver(function(mutations, observer) {
-//   // fired when a mutation occurs
-//   if (mutations.some(mutation => mutation.addedNodes.length && mutation.addedNodes[0].className && console.log(mutation.addedNodes[0].className))){ //&& mutation.addedNodes[0].className.indexOf('gD') > -1)) {
-//     console.log(mutations, observer);
-//   }
-//   // ...
-// });
-
-// // define what element should be observed by the observer
-// // and what types of mutations trigger the callback
-// observer.observe(document, {
-//   subtree: true,
-//   attributes: true
-//   //...
-// });
 
 setTimeout(() => {
   

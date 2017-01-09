@@ -9,6 +9,8 @@ import History from './History.js';
 import Tasks from './Tasks.js';
 import Emails from './Emails.js';
 
+import utils from '../changeViews.js';
+
 var setTab = function(tab) {
   Store.currentTab = tab;
 };
@@ -18,11 +20,9 @@ chrome.runtime.sendMessage({
   url: Store.server + '/jobs/' + Store.userId + '/favored'
 }, function(res) {
   if (res.err) {
-    alert('error:' + err);
+    alert('error:' + res.err);
   } else {
-    // alert(res.data);
     Store.user = res.data;
-    // console.log('store', Store.user);
   }
 });
 
@@ -31,9 +31,8 @@ chrome.runtime.sendMessage({
   url: Store.server + '/actions/' + Store.userId
 }, function(res) {
   if (res.err) {
-    alert('error:' + err);
+    alert('error:' + res.err);
   } else {
-    // alert(res.data);
     Store.tasks = res.data;
   }
 });
@@ -43,9 +42,8 @@ chrome.runtime.sendMessage({
   url: Store.server + '/jobs/' + Store.userId + '/new'
 }, function(res) {
   if (res.err) {
-    alert('error:' + err);
+    alert('error:' + res.err);
   } else {
-    // alert(res.data);
     Store.jobs = res.data;
     console.log('Job data', Store.jobs);
   }
@@ -54,10 +52,7 @@ chrome.runtime.sendMessage({
 var grabEmail = function() {
   var fromDiv = document.getElementsByClassName('gD')[0];
   if (fromDiv) {
-    Store.currentEmail = {
-      senderEmail: fromDiv.getAttribute('email'),
-      senderName: fromDiv.innerHTML
-    };
+    utils.openEmail();
   } else {
     Store.currentEmail = {warning: 'Please open an email first.'};
   }
