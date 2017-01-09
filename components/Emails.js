@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import Store from './Store.js';
 import {observer} from 'mobx-react';
+import utils from '../changeViews.js';
 
 var grabEmail = function() {
   var fromDiv = document.getElementsByClassName('gD')[0];
@@ -39,6 +40,10 @@ var Emails = observer((props) => {
   }
 
   var addAction = function() {
+    if (Store.currentContact.job) {
+      Store.currentEmail.company = Store.currentContact.job.company;
+      Store.currentEmail.jobId = Store.currentContact.job.id;
+    }
     console.log('adding action', Store.currentEmail);
     chrome.runtime.sendMessage({
       action: 'POST',
@@ -55,6 +60,7 @@ var Emails = observer((props) => {
       }
     }, function(res) {
       console.log(res);
+      utils.openEmail();
     });
     Store.currentEmail;
   };
