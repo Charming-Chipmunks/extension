@@ -45,6 +45,14 @@ var Tasks = observer((props) => {
             var taskIcon = phoneIcon;
           }
 
+          if (record.scheduledTime) {
+            record.scheduledTime = new Date(record.scheduledTime).toDateTime();
+          }
+
+          if (record.completedTime) {
+            record.completedTime = new Date(record.completedTime).toDateTime();
+          }
+
           return (
             <div key={i} className={taskStatus}>
               {taskIcon && <img src={taskIcon} />}

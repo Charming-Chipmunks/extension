@@ -8,6 +8,8 @@ class Store {
       currentUser: 'my user',
       userId: '1',
 
+      tableRowListenersEnabled: false,
+
       currentTab: 'tasks',
 
       currentEmail: {},
