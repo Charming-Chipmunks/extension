@@ -111,28 +111,60 @@ var Emails = observer((props) => {
     Store.currentEmail.time = e.target.value;
   };
 
+  var timeSince = function(date) {
+
+    var seconds = Math.floor((new Date() - new Date(date)) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+      return interval + ' years';
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+      return interval + ' months';
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+      return interval + ' days';
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+      return interval + ' hours';
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+      return interval + ' minutes';
+    }
+    return Math.floor(seconds) + ' seconds';
+  };
+
+  if (Store.currentJobTasks.filter(record => record.actionSource === 'user' && record.completedTime.replace(/T/, ' ').slice(0, 19) === Store.currentEmail.time).length) {
+    var emailLogged = true;
+  }          
+
   return (
     <div>
-      <button onClick={grabEmail}>Record this email</button>
       <div>{Store.currentEmail.warning}</div>
       {!Store.currentContact.contact && <input type='text' onChange={changeName} value={Store.currentEmail.senderName} />}
       {!Store.currentContact.contact && <br />}
       {!Store.currentContact.contact && <input type='text' onChange={changeEmail} value={Store.currentEmail.senderEmail} />}
       {!Store.currentContact.contact && <br />}
-      {Store.currentContact.contact && <div>{Store.currentContact.contact.firstname + ' ' + Store.currentContact.contact.lastname}</div>}
+      {Store.currentContact.contact && Store.currentContact.contact.firstname !== Store.currentContact.contact.email && <div>{Store.currentContact.contact.firstname + (Store.currentContact.contact.lastname ? ' ' + Store.currentContact.contact.lastname : '')}</div>}
       {Store.currentContact.contact && <div>{Store.currentContact.contact.email}</div>}
-      <input type='text' onChange={changeTime} value={Store.currentEmail.time} />
+      {!emailLogged && <input type='text' onChange={changeTime} value={Store.currentEmail.time} />}
+      {emailLogged && <div>{Store.currentEmail.time}</div>}
       {!Store.currentContact.contact && <select onChange={setEmailJob}>
         <option value='1' data-company='none selected'>SELECT</option>
         {Store.jobs.map( (job, i) => (<option value={job.id} data-company={job.company} key={i}>{job.jobTitle}</option>))}
       </select>}
-      {Store.currentContact.contact && <div>{Store.currentContact.job.jobTitle}</div>}
-      <input type="text" onChange={setEmailDescription} placeholder="Description" />
-      {!Store.currentEmail.warning && <button onClick={addActionHandler}>Submit</button>}
+      {Store.currentContact.job && <div>{Store.currentContact.job.jobTitle}</div>}
+      {!emailLogged && <input type="text" onChange={setEmailDescription} placeholder="Description" />}
+      {!Store.currentEmail.warning && !emailLogged && <button onClick={addActionHandler}>Submit</button>}
    
       {Store.currentJobTasks.length && <div>History</div>}
       {Store.currentJobTasks.length && <div>
-        {Store.currentJobTasks.filter(record => record.actionSource === 'user').sort((a, b) => a.completedTime >= b.completedTime ? 1 : 0).map((record, i) => {
+        {Store.currentJobTasks.filter(record => record.actionSource === 'user').sort((a, b) => a.completedTime <= b.completedTime ? 1 : 0).map((record, i) => {
           if (record.type === 'email') {
             var taskIcon = emailIcon;
           } else if (record.type === 'phone') {
@@ -146,7 +178,7 @@ var Emails = observer((props) => {
           return (
             <div key={i} className={thisEmail ? 'current-email' : ''}>
               <img src={taskIcon} />
-              <div>Completed at {record.completedTime}</div>
+              <div>{timeSince(record.completedTime)} ago</div>
               <div>{record.type}</div>
               <div>{record.description}</div>
               {thisEmail && <div>This Email</div>}
