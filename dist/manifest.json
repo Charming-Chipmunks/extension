@@ -6,19 +6,33 @@
   "version": "1.0",
 
   "permissions": [
-    "tabs", "<all_urls>"
+    "tabs", "<all_urls>", "identity"
   ],
 
   "content_scripts": [
     {
       "run_at" : "document_end",
       "matches": ["https://mail.google.com/*"],
-      "css": ["styles.css"],
-      "js": ["content.bundle.js"]
+      "css": [
+        "styles.css",
+        "material-icons-font.css",
+        "materialize.min.css"
+      ],
+      "js": [
+        "content.bundle.js",
+        "materialize.min.js"
+      ]
     }
   ],
 
   "background": {
     "scripts": ["background.bundle.js"]
-  }
+  },
+
+  "oauth2": {
+    "client_id": "241390106014-1l5pmvlr76rq6ana6vk0e0i41tblktr3.apps.googleusercontent.com",
+    "scopes": ["openid", "email", "profile"]
+  }, 
+
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0pd1nBp+ndmIUlhDLjf2Ia9Z8AuFrjK4OdkXillThDDvUtv9c/LKfTgio91R6FYqantnGzibtG+P9a9iMUZFoZO8sJUy6LjVFV3wUIpHPLnYgy9fv4GTFR4ayQYdY9FshGe720G6vQOmU/5JpWF06CLMEcXXu4axh/tPOIgBppqkrGl3ToXetMUS3xGDj3fwMKz/ySIODIEhLkrDLwMXzxmJXsyjAocXSnAo3Lt7WqFO9od/MJbI40o1nz/kx2nK5qf0NjXF61l3S2FtR/W1TT2h85cvL91VnwfG+/CrpnEHhxJBLYp/UmQsoSblEVROpL5VOuAYrHhkkF4kEbXQTQIDAQAB"
 }

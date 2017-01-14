@@ -6,7 +6,6 @@ import mobx from 'mobx';
 import {observer} from 'mobx-react';
 
 var Tasks = observer((props) => {
-  console.log('my tasks');
   var tasks = Store.tasks.slice().map(record => mobx.toJS(record));
   var now = new Date();
   var emailIcon = 'https://puu.sh/t6VbF/f01ab2fd8e.png';
@@ -24,14 +23,13 @@ var Tasks = observer((props) => {
       action: 'PUT',
       url: Store.server + '/actions/' + Store.userId + '/' + record.id
     }, function(res) {
-      console.log(res);
     });
   };
 
   return (
     <div>
       <div>TODO:</div><br />
-      <div>
+      <div className='task-list y-scroll'>
         {tasks.filter(record => /*record.actionType === 'recommendation' &&*/ !record.completedTime).map((record, i) => {
           if (new Date(record.scheduledTime) < now ) {
             var taskStatus = 'task-overdue';

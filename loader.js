@@ -14,8 +14,10 @@ var insertWhenReady = function() {
   if (emails) {
     var div = document.createElement('div');
     div.id = 'ext';
+    div.className = 'sidebar-max-width';
     var spacer = document.createElement('spacer');
     spacer.id = 'spacer';
+    spacer.className = 'sidebar-max-width';
     emails.before(spacer);
     emails.before(div);
     ReactDOM.render(<Sidebar />, document.getElementById('ext'));

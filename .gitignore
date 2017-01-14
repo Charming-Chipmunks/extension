@@ -9,6 +9,9 @@ logs
 
 .env
 
+dist.crx
+key.pem
+
 # Runtime data
 pids
 *.pid

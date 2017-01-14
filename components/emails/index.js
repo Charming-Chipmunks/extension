@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Store from './Store.js';
+import Store from '../Store.js';
 import {observer} from 'mobx-react';
-import utils from '../changeViews.js';
+import utils from '../../changeViews.js';
+import ReceivedEmailAction from './ReceivedEmailAction.js';
 
 var grabEmail = function() {
   var fromDiv = document.getElementsByClassName('gD')[0];
@@ -20,21 +21,33 @@ var grabEmail = function() {
 var emailIcon = 'https://puu.sh/t6VbF/f01ab2fd8e.png';
 var phoneIcon = 'https://puu.sh/t6VwW/ab509518d2.png';
 
-// grabEmail();
-
 var Emails = observer((props) => {
-  console.log('hi', Store.currentContact);
-  if (Store.currentContact.job && !Store.currentJobTasks.length) {
-    console.log('fetching events');
+
+  if (Store.currentContact.job && !Store.currentJobContacts.length) {
     chrome.runtime.sendMessage({
       action: 'GET',
+      token: Store.token,
+      url: `${Store.server}/contacts/${Store.userId}/${Store.currentContact.job.id}`
+    }, function(res) {
+      if (res.err) {
+        console.log('error loading job contacts', err);
+      } else {
+        console.log('job contacts', res.data);
+        Store.currentJobContacts = res.data;
+      }
+    });
+  }
+
+  if (Store.currentContact.job && !Store.currentJobTasks.length) {
+    chrome.runtime.sendMessage({
+      action: 'GET',
+      token: Store.token,
       url: `${Store.server}/actions/${Store.userId}/${Store.currentContact.job.id}`
     }, function(res) {
       if (res.err) {
         console.log('error getting job actions', res.err);
       } else {
         Store.currentJobTasks = res.data;
-        console.log(Store.currentJobTasks);
       }
     });
   }
@@ -44,12 +57,12 @@ var Emails = observer((props) => {
       Store.currentEmail.company = Store.currentContact.job.company;
       Store.currentEmail.jobId = Store.currentContact.job.id;
     }
-    console.log('adding action', Store.currentEmail);
     chrome.runtime.sendMessage({
       action: 'POST',
       url: Store.server + '/actions',
+      token: Store.token,
       data: {
-        type: 'email',
+        type: 'sentEmail',
         company: Store.currentEmail.company,
         description: Store.currentEmail.description,
         actionSource: 'user',
@@ -59,7 +72,6 @@ var Emails = observer((props) => {
         contactId: 1
       }
     }, function(res) {
-      console.log(res);
       utils.openEmail();
     });
     Store.currentEmail;
@@ -70,6 +82,7 @@ var Emails = observer((props) => {
       var name = Store.currentEmail.senderName.split(' ');
       chrome.runtime.sendMessage({
         action: 'POST',
+        token: Store.token,
         url: `${Store.server}/contacts/${Store.userId}/${Store.currentEmail.jobId}`,
         data: {
           firstname: name[0],
@@ -81,7 +94,6 @@ var Emails = observer((props) => {
           console.log('Error adding user', res.err);
         } else {
           Store.currentContact.contact = res.data;
-          console.log('new contact', Store.currentContact.contact);
           addAction();
         }
       });
@@ -156,7 +168,7 @@ var Emails = observer((props) => {
       {emailLogged && <div>{Store.currentEmail.time}</div>}
       {!Store.currentContact.contact && <select onChange={setEmailJob}>
         <option value='1' data-company='none selected'>SELECT</option>
-        {Store.jobs.map( (job, i) => (<option value={job.id} data-company={job.company} key={i}>{job.jobTitle}</option>))}
+        {Store.jobs.map( (job, i) => (<option value={job.id} data-company={job.company} key={i}>{job.company}: {job.jobTitle}</option>))}
       </select>}
       {Store.currentContact.job && <div>{Store.currentContact.job.jobTitle}</div>}
       {!emailLogged && <input type="text" onChange={setEmailDescription} placeholder="Description" />}
@@ -165,7 +177,7 @@ var Emails = observer((props) => {
       {Store.currentJobTasks.length && <div>History</div>}
       {Store.currentJobTasks.length && <div>
         {Store.currentJobTasks.filter(record => record.actionSource === 'user').sort((a, b) => a.completedTime <= b.completedTime ? 1 : 0).map((record, i) => {
-          if (record.type === 'email') {
+          if (record.type === 'email' || record.type === 'sentEmail' || record.type === 'receivedEmail') {
             var taskIcon = emailIcon;
           } else if (record.type === 'phone') {
             var taskIcon = phoneIcon;
@@ -175,11 +187,20 @@ var Emails = observer((props) => {
             var thisEmail = true;
           }
 
+          if (record.type === 'receivedEmail' || record.type === 'email') {
+            var type = 'Got email from ';
+          }
+
+          if (record.type === 'sentEmail') {
+            var type = 'Sent email to ';
+          }
+
           return (
             <div key={i} className={thisEmail ? 'current-email' : ''}>
               <img src={taskIcon} />
               <div>{timeSince(record.completedTime)} ago</div>
-              <div>{record.type}</div>
+              {!!Store.currentJobContacts.length && <div>{type}{Store.currentJobContacts[0].firstname + ' ' + Store.currentJobContacts[0].lastname}</div>}
+              {!type && <div>{record.type}</div>}
               <div>{record.description}</div>
               {thisEmail && <div>This Email</div>}
               <hr />

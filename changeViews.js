@@ -6,11 +6,9 @@ var obj = {};
 var addTableRowListeners = function() {
   var table = document.getElementsByClassName('zt')[0];
   $(table).on('click', '.zA', function(e) {
-    console.log('you clicked me');
     var detectEmailLoad = function() {
       var fromDiv = document.getElementsByClassName('gD')[0];
       if (fromDiv) {
-        console.log('going to open email');
         openEmail();
       } else {
         setTimeout(detectEmailLoad, 100);
@@ -23,12 +21,9 @@ var addTableRowListeners = function() {
 };
 
 var addBackButtonListener = function() {
-  console.log('adding back listener');
   $('.lS').on('click', function(e) {
     Store.currentTab = 'tasks';
-    console.log('start');
     if (!Store.tableRowListenersEnabled) {
-      console.log('need to add row listeners');
       var detectTableLoad = function() {
         var table = document.getElementsByClassName('zt')[0];
         if (table) {
@@ -45,7 +40,6 @@ var addBackButtonListener = function() {
 
 var openEmail = function() {
   var fromDiv = document.getElementsByClassName('gD')[0];
-  console.log('opening email');
   addBackButtonListener();
 
   var timeSpans = document.getElementsByClassName('g3');
@@ -57,6 +51,7 @@ var openEmail = function() {
   
   Store.currentContact = {};
   Store.currentJobTasks = [];
+  Store.currentJobContacts = [];
   chrome.runtime.sendMessage({
     action: 'GET',
     url: `${Store.server}/contacts/jobs/${encodeURIComponent(Store.currentEmail.senderEmail)}/${Store.userId}`
@@ -66,7 +61,6 @@ var openEmail = function() {
       console.log('error loading contact', res.err);
     } else {
       Store.currentContact = res.data;
-      console.log('contact data', Store.currentContact);
     }
   });
   
