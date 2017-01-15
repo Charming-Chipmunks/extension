@@ -27,9 +27,20 @@ var grabEmail = function() {
   Store.currentTab = 'email';
 };
 
+var collapse = function() {
+  document.getElementById('spacer').className = 'sidebar-min-width';
+  document.getElementById('ext').className = 'sidebar-min-width';
+  Store.collapsed = true;
+};
+
+var expand = function() {
+  document.getElementById('spacer').className = 'sidebar-max-width';
+  document.getElementById('ext').className = 'sidebar-max-width';
+  Store.collapsed = false;
+};
+
 var Sidebar = observer((props) => {
   if (Store.token) {
-    console.log('UserId', Store.userId);
     chrome.runtime.sendMessage({
       action: 'GET',
       url: Store.server + '/user',
@@ -73,7 +84,12 @@ var Sidebar = observer((props) => {
           if (res.err) {
             alert('error:' + res.err);
           } else {
-            Store.jobs = res.data;
+            Store.jobs = res.data.map(job => {
+              job.display = job.company + ': ' + job.jobTitle;
+              return job;
+            });
+            Store.jobsLookup = {};
+            res.data.forEach(job => Store.jobsLookup[job.display] = job);
           }
         });
         
@@ -88,37 +104,19 @@ var Sidebar = observer((props) => {
         <div className='center-container'>
           <div className='logo text-center'>(cb)</div>
           <button className='btn' onClick={()=>chrome.runtime.sendMessage({authenticate: true}, (res) => Store.token = res.token)} >Log In</button>
-          <button className='btn' onClick={function() {
-            console.log('I\'m shrinking');
-            document.getElementById('spacer').className = 'sidebar-min-width';
-            document.getElementById('ext').className = 'sidebar-min-width';
-            Store.collapsed = true;
-          }}>Collapse</button>      
+          <button className='btn' onClick={collapse}>&gt;</button>      
         </div>
       </div>}
       {!Store.collapsed && !!Store.token && <div>
-        <h3 className={'nav-tab ' + (Store.currentTab === 'tasks' ? 'nav-tab-active' : '')} onClick={() => setTab('tasks')}>Tasks</h3>
-        <h3 className={'nav-tab ' + (Store.currentTab === 'company' ? 'nav-tab-active' : '')} onClick={() => setTab('company')}>Company</h3>
-        <h3 className={'nav-tab ' + (Store.currentTab === 'history' ? 'nav-tab-active' : '')} onClick={() => setTab('history')}>History</h3>
+        <div className={'nav-tab ' + (Store.currentTab === 'tasks' ? 'nav-tab-active' : '')} onClick={() => setTab('tasks')}>Tasks</div>
+        <div className={'nav-tab ' + (Store.currentTab === 'company' ? 'nav-tab-active' : '')} onClick={() => setTab('company')}>Company</div>
+        <div className={'nav-tab ' + (Store.currentTab === 'email' ? 'nav-tab-active' : '')} onClick={() => utils.openEmail()}>History</div>
       </div>}
       {!Store.collapsed && !!Store.token && (Store.currentTab === 'company') && <Company />}
-      {!Store.collapsed && !!Store.token && (Store.currentTab === 'history') && <History />}
       {!Store.collapsed && !!Store.token && (Store.currentTab === 'tasks') && <Tasks />}
       {!Store.collapsed && !!Store.token && (Store.currentTab === 'email') && <Emails />}
-      {!Store.collapsed && !!Store.token && <button className='btn collapse' onClick={function() {
-        console.log('I\'m shrinking');
-        document.getElementById('spacer').className = 'sidebar-min-width';
-        document.getElementById('ext').className = 'sidebar-min-width';
-        Store.collapsed = true;
-      }}>&gt;</button>}
-      {Store.collapsed && <div className='xy-center'>
-        <button className='btn' onClick={function() {
-          console.log('I\'m growing');
-          document.getElementById('spacer').className = 'sidebar-max-width';
-          document.getElementById('ext').className = 'sidebar-max-width';
-          Store.collapsed = false;
-        }}>&lt;</button>
-      </div>}
+      {!Store.collapsed && !!Store.token && <button className='btn collapse' onClick={collapse}>&gt;</button>}
+      {Store.collapsed && <button className='btn collapse' onClick={expand}>&lt;</button>}
     </div>
   );
 });

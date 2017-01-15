@@ -69,7 +69,7 @@ function(request, sender, sendResponse) {
 
   if (request.authenticate) {
     //////////////////////
-    ////////////AUTH//////
+    ////////AUTH//////////
     //////////////////////
     var manifest = chrome.runtime.getManifest();
 
@@ -93,7 +93,10 @@ function(request, sender, sendResponse) {
           var result = titleParts[0];
           if (titleParts.length === 2 && RESULT_PREFIX.indexOf(result) >= 0) {
             chrome.tabs.onUpdated.removeListener(googleAuthorizationHook);
-            chrome.tabs.remove(tabId);
+            chrome.tabs.query({url: '*://mail.google.com/*'}, (tabs) => {
+              chrome.tabs.update(tabs[0].id, {active: true});
+              chrome.tabs.remove(tabId);
+            });
 
             var response = titleParts[1];
             switch (result) {

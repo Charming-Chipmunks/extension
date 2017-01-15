@@ -21,7 +21,8 @@ var Tasks = observer((props) => {
 
     chrome.runtime.sendMessage({
       action: 'PUT',
-      url: Store.server + '/actions/' + Store.userId + '/' + record.id
+      url: Store.server + '/actions/' + Store.userId + '/' + record.id,
+      token: Store.token
     }, function(res) {
     });
   };

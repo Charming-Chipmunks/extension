@@ -5,6 +5,10 @@ import Store from './components/Store.js';
 import utils from './changeViews.js';
 import $ from 'jquery';
 
+if (Store.token === 'test') {
+  console.warn('CLIENT AUTH DISABLED');
+}
+
 Date.prototype.toDateTime = function() {
   return this.toISOString().replace(/T/, ' ').slice(0, 19);
 };

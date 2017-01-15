@@ -39,6 +39,7 @@ var addBackButtonListener = function() {
 };
 
 var openEmail = function() {
+  console.log('opening email');
   var fromDiv = document.getElementsByClassName('gD')[0];
   addBackButtonListener();
 
@@ -48,12 +49,14 @@ var openEmail = function() {
     senderName: fromDiv.innerHTML,
     time: new Date(timeSpans[timeSpans.length - 1].title.replace(/at /, ' ')).toDateTime()
   };
+  console.log(new Date(timeSpans[timeSpans.length - 1].title.replace(/at /, ' ')));
   
   Store.currentContact = {};
   Store.currentJobTasks = [];
   Store.currentJobContacts = [];
   chrome.runtime.sendMessage({
     action: 'GET',
+    token: Store.token,
     url: `${Store.server}/contacts/jobs/${encodeURIComponent(Store.currentEmail.senderEmail)}/${Store.userId}`
   }, function(res) {
     if (res.err) {

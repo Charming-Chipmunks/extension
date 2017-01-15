@@ -20,6 +20,7 @@
       ],
       "js": [
         "content.bundle.js",
+        "jquery.min.js",
         "materialize.min.js"
       ]
     }
