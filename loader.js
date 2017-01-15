@@ -5,6 +5,10 @@ import Store from './components/Store.js';
 import utils from './changeViews.js';
 import $ from 'jquery';
 
+if (Store.token === 'test') {
+  console.warn('CLIENT AUTH DISABLED');
+}
+
 Date.prototype.toDateTime = function() {
   return this.toISOString().replace(/T/, ' ').slice(0, 19);
 };
@@ -14,8 +18,10 @@ var insertWhenReady = function() {
   if (emails) {
     var div = document.createElement('div');
     div.id = 'ext';
+    div.className = 'sidebar-max-width';
     var spacer = document.createElement('spacer');
     spacer.id = 'spacer';
+    spacer.className = 'sidebar-max-width';
     emails.before(spacer);
     emails.before(div);
     ReactDOM.render(<Sidebar />, document.getElementById('ext'));

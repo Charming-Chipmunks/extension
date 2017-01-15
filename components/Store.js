@@ -4,9 +4,15 @@ import { autorun, action, extendObservable } from 'mobx';
 class Store {
   constructor() {
     extendObservable(this, {
-      server: 'http://jobz.mooo.com:4000',
+      // server: 'http://jobz.mooo.com:3000',
+      server: 'http://jobz.mooo.com:3000',
+      currentUserObject: {},
       currentUser: 'my user',
-      userId: '1',
+      userId: '',
+
+      collapsed: false,
+
+      token: '',
 
       tableRowListenersEnabled: false,
 
@@ -17,6 +23,11 @@ class Store {
       currentContact: {},
 
       currentJobTasks: [],
+
+      currentJobContacts: [],
+
+      jobs: [],
+      jobsLookup: {},
 
       params: {
         c: false,
@@ -81,7 +92,7 @@ class Store {
         }]
       },
       user: {},
-      tasks: []
+      tasks: [],
     });
   }
 }
