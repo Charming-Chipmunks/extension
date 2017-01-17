@@ -5,6 +5,8 @@ import Store from '../Store.js';
 import {observer} from 'mobx-react';
 import utils from '../../changeViews.js';
 import ReceivedEmailAction from './ReceivedEmailAction.js';
+import Modal from '../Modal.js';
+import Action from './Action.js';
 // import $ from 'jquery';
 
 var grabEmail = function() {
@@ -33,27 +35,31 @@ var phoneIcon = 'https://puu.sh/t6VwW/ab509518d2.png';
 
 
       keyboardEvent[initMethod](
-                 "keydown", // event type : keydown, keyup, keypress
-                true, // bubbles
-                true, // cancelable
-                window, // viewArg: should be window
-                false, // ctrlKeyArg
-                false, // altKeyArg
-                false, // shiftKeyArg
-                false, // metaKeyArg
-                40, // keyCodeArg : unsigned long the virtual key code, else 0
-                0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
+        "keydown", // event type : keydown, keyup, keypress
+        true, // bubbles
+        true, // cancelable
+        window, // viewArg: should be window
+        false, // ctrlKeyArg
+        false, // altKeyArg
+        false, // shiftKeyArg
+        false, // metaKeyArg
+        40, // keyCodeArg : unsigned long the virtual key code, else 0
+        40 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
       );
       // e.target.focus();
-      setTimeout(() => e.target.dispatchEvent(keyboardEvent), 250);
-        });
-      }
+      setTimeout(() => e.target.click(), 250);
+    });
+  }
 
   componentWillUnmount() {
     // $('.sidebar-content select').material_select('destroy');
   }
 
+
   render() {
+    if (!Store.userId) {
+      console.log('still loading')
+    }
 
     if (Store.currentContact.job && !Store.currentJobContacts.length) {
       chrome.runtime.sendMessage({
@@ -156,32 +162,6 @@ var phoneIcon = 'https://puu.sh/t6VwW/ab509518d2.png';
       Store.currentEmail.senderEmail = e.target.value;
     };
 
-    var timeSince = function(date) {
-      var seconds = Math.floor((new Date() - new Date(date)) / 1000);
-      var interval = Math.floor(seconds / 31536000);
-
-      if (interval > 1) {
-        return interval + ' years';
-      }
-      interval = Math.floor(seconds / 2592000);
-      if (interval > 1) {
-        return interval + ' months';
-      }
-      interval = Math.floor(seconds / 86400);
-      if (interval > 1) {
-        return interval + ' days';
-      }
-      interval = Math.floor(seconds / 3600);
-      if (interval > 1) {
-        return interval + ' hours';
-      }
-      interval = Math.floor(seconds / 60);
-      if (interval > 1) {
-        return interval + ' minutes';
-      }
-      return Math.floor(seconds) + ' seconds';
-    };
-
     if (Store.currentJobTasks.filter(record => record.actionSource === 'user' && record.completedTime.replace(/T/, ' ').slice(0, 19) === Store.currentEmail.time).length) {
       var emailLogged = true;
     }          
@@ -204,7 +184,6 @@ var phoneIcon = 'https://puu.sh/t6VwW/ab509518d2.png';
           <label>Job</label>
           <input list='select-job-list' id='select-job' onBlur={setEmailJob}/>
           <datalist id='select-job-list' className='select-job' >
-            <option disabled selected>Pick</option>
             {Store.jobs.map( (job, i) => (<option key={i}>{job.display}</option>))}
           </datalist>
         </div>}
@@ -218,41 +197,7 @@ var phoneIcon = 'https://puu.sh/t6VwW/ab509518d2.png';
      
         {!!Store.currentJobTasks.length && <div>History</div>}
         {!!Store.currentJobTasks.length && <div className='y-scroll'>
-          {Store.currentJobTasks.filter(record => record.actionSource === 'user').sort((a, b) => a.completedTime <= b.completedTime ? 1 : 0).map((record, i) => {
-            if (record.type === 'email' || record.type === 'sentEmail' || record.type === 'receivedEmail') {
-              var taskIcon = emailIcon;
-            } else if (record.type === 'phone') {
-              var taskIcon = phoneIcon;
-            } 
-
-            if (record.completedTime.replace(/T/, ' ').slice(0, 19) === Store.currentEmail.time) {
-              var thisEmail = true;
-            }
-
-            if (record.type === 'receivedEmail' || record.type === 'email') {
-              var type = 'Got email from ';
-            }
-
-            if (record.type === 'sentEmail') {
-              var type = 'Sent email to ';
-            }
-
-            return (
-              <div key={i} className={thisEmail ? 'current-email history-item' : 'history-item'}>
-                <img src={taskIcon} />
-                <div className='content'>
-                  <div className='header'>
-                    <div className='notes'>
-                      <div>{timeSince(record.completedTime)} ago</div>
-                      {thisEmail && <div>This Email</div>}
-                    </div>
-                    <div className='from'>{type}{Store.currentJobContacts[0].firstname + ' ' + Store.currentJobContacts[0].lastname}</div>
-                  </div>
-                  <div className='body'>{record.description}</div>
-                </div>
-              </div>
-            );
-          })}
+          {Store.currentJobTasks.filter(record => record.actionSource === 'user').sort((a, b) => a.completedTime <= b.completedTime ? 1 : 0).map((record, i) => <Action key={i} action={record} />)}
         </div>}
       </div>
     );

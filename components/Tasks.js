@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import Store from './Store.js';
 import mobx from 'mobx';
 import {observer} from 'mobx-react';
+import Action from './Action.js';
 
 var Tasks = observer((props) => {
   var tasks = Store.tasks.slice().map(record => mobx.toJS(record));
@@ -31,41 +32,7 @@ var Tasks = observer((props) => {
     <div>
       <div>TODO:</div><br />
       <div className='task-list y-scroll'>
-        {tasks.filter(record => /*record.actionType === 'recommendation' &&*/ !record.completedTime).map((record, i) => {
-          if (new Date(record.scheduledTime) < now ) {
-            var taskStatus = 'task-overdue';
-          } else {
-            var taskStatus = 'task-pending';
-          }
-
-          if (record.action === 'email') {
-            var taskIcon = emailIcon;
-          } else if (record.action === 'phone') {
-            var taskIcon = phoneIcon;
-          }
-
-          if (record.scheduledTime) {
-            record.scheduledTime = new Date(record.scheduledTime).toDateTime();
-          }
-
-          if (record.completedTime) {
-            record.completedTime = new Date(record.completedTime).toDateTime();
-          }
-
-          return (
-            <div key={i} className={taskStatus}>
-              {taskIcon && <img src={taskIcon} />}
-              <div>{record.company}</div>
-              <div>{record.description}</div>
-              {!record.completedTime && record.scheduledTime && <div>Do by {record.scheduledTime}</div>}
-              {record.completedTime && <div>Completed at {record.completedTime}</div>}
-              <div>{record.action}</div>
-              <div>{record.actionDetails}</div>
-              {!record.completedTime && <button onClick={() => markCompleted(record)}>Mark as Done</button>}
-              <hr />
-            </div>
-          );
-        })}
+        {tasks.filter(record => /*record.actionType === 'recommendation' &&*/ !record.completedTime).map((record, i) => <Action action={record} completed={markCompleted}key={i} />)}
       </div>
     </div>
   );

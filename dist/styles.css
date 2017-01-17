@@ -52,6 +52,43 @@
   height: 100%;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
+
+.nav-header {
+  background-color: #e5e5e5;
+  display: flex;
+  flex-direction: row;
+  /*justify-content: space-between;*/
+  margin: -12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid black;
+}
+
+.nav-header .clickable {
+  /*border-radius: 18px;*/
+  border-radius: 4px;
+}
+
+.nav-header * {
+  text-align: center;
+  padding: 6px;
+}
+
+.nav-header span {
+  flex-grow: 2;
+}
+
+.nav-header i {
+  flex-grow: 1;
+}
+.nav-header :hover {
+  background-color: rgb(43, 187, 173);
+  color: white;
+} 
+
 .nav-tab {
   display: inline-block;
   width: 100px;
@@ -85,17 +122,16 @@
   display: none;
 }
 
-.current-email {
-  font-style: italic;
-  background-color: lightgray;
-}
 
-.task-list {
-  height: 600px;
-}
 
 .y-scroll { 
   overflow-y: auto;
+}
+
+.task-list {
+  position: absolute;
+  top: 70px;
+  bottom: 60px;
 }
 
 .xy-center {
@@ -141,17 +177,22 @@
 
 .history-item {
   padding: 6px;
+  padding-left: 44px;
   background-color: #e5e5e5;
   border: solid 1px black;
   border-radius: 3px;
   margin-bottom: 6px;
+  display: inline-block;
+  width: 100%;
+  position: relative;
+  /*min-height: 55px;*/
 }
 
-.history-item img {
-  position: relative;
-  padding: 10px 3px;
+.history-item-icon {
+  position: absolute;
+  left: 10px;
   top: 50%;
-  /*transform: translate(0, -50%)*/
+  transform: translate(0, -50%);
 }
 
 .history-item .content {
@@ -164,6 +205,54 @@
   padding-left: 10px;
 }
 
+.history-item .body {
+  position: relative;
+}
+
 .history-item .notes div {
   text-align: right;
+}
+
+.history-item-done {
+  position: absolute;
+  bottom: 0px;
+  right: 30px;
+}
+
+.history-item-edit {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+.history-item.overdue {
+  border-color: red;
+  background-color: pink;
+}
+
+.history-item.today {
+  /*border-color: yellow;*/
+  background-color: lightyellow;
+  background-color: rgba(0,0,0,.2);
+}
+
+.current-email {
+  font-style: italic;
+  background-color: rgba(0,0,0,.2);
+}
+
+.side-overlay {
+  background-color: rgba(100, 100, 100, .75);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.side-modal-container {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 6px;
+  padding: 25px  40px;
 }

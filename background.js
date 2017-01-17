@@ -81,6 +81,7 @@ function(request, sender, sendResponse) {
               '?client_id=' + clientId + 
               '&response_type=id_token' + 
               '&access_type=offline' + 
+              // '&prompt=none' + 
               '&redirect_uri=' + redirectUri + 
               '&scope=' + scopes;
 

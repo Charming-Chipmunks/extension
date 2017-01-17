@@ -1,5 +1,6 @@
 //MobX Store
-import { autorun, action, extendObservable } from 'mobx';
+// import { autorun, action, extendObservable } from 'mobx';
+import { extendObservable } from 'mobx';
 
 class Store {
   constructor() {
@@ -27,6 +28,7 @@ class Store {
       currentJobContacts: [],
 
       jobs: [],
+      jobsLookupById: {},
       jobsLookup: {},
 
       params: {

@@ -9,6 +9,8 @@
     "tabs", "<all_urls>", "identity"
   ],
 
+  "web_accessible_resources": ["*.woff2"],
+
   "content_scripts": [
     {
       "run_at" : "document_end",
