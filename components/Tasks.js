@@ -19,7 +19,6 @@ var Tasks = observer((props) => {
     newTask.completedTime = new Date().toISOString().slice(0, 19).replace(/T/, ' ');
     Store.tasks[i] = newTask;
 
-
     chrome.runtime.sendMessage({
       action: 'PUT',
       url: Store.server + '/actions/' + Store.userId + '/' + record.id,

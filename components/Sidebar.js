@@ -8,7 +8,7 @@ import Company from './Company.js';
 import History from './History.js';
 import Tasks from './Tasks.js';
 import Emails from './emails';
-import Modal from './Modal.js';
+import EditActionModal from './EditActionModal.js';
 
 import utils from '../changeViews.js';
 
@@ -119,7 +119,7 @@ var Sidebar = observer((props) => {
         <div className='center-container'>
           <div className='logo text-center'>(cb)</div>
           <button className='btn' onClick={()=>chrome.runtime.sendMessage({authenticate: true}, (res) => Store.token = res.token)} >Log In</button>
-          <button className='btn' onClick={collapse}>&gt;</button>      
+          <button className='btn' onClick={collapse}>&gt;</button> 
         </div>
       </div>}
       {!Store.collapsed && !!Store.token && (Store.currentTab === 'company') && <Company />}
