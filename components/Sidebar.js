@@ -8,6 +8,7 @@ import Company from './Company.js';
 import History from './History.js';
 import Tasks from './Tasks.js';
 import Emails from './emails';
+import EditActionModal from './EditActionModal.js';
 
 import utils from '../changeViews.js';
 
@@ -52,6 +53,10 @@ var Sidebar = observer((props) => {
         Store.currentUserObject = res.data;
         Store.userId = res.data.id;
 
+        if (Store.currentTab === 'email') {
+          utils.openEmail();
+        }
+
         // chrome.runtime.sendMessage({
         //   action: 'GET',
         //   url: Store.server + '/jobs/' + Store.userId + '/favored',
@@ -84,15 +89,14 @@ var Sidebar = observer((props) => {
           if (res.err) {
             alert('error:' + res.err);
           } else {
-            Store.jobs = res.data.map(job => {
+            res.data.forEach(job => {
               job.display = job.company + ': ' + job.jobTitle;
-              return job;
+              Store.jobsLookup[job.display] = job;
+              Store.jobsLookupById[job.id] = job;
             });
-            Store.jobsLookup = {};
-            res.data.forEach(job => Store.jobsLookup[job.display] = job);
+            Store.jobs = res.data;
           }
         });
-        
       }
     });
 
@@ -100,17 +104,23 @@ var Sidebar = observer((props) => {
 
   return (
     <div className='side-container'>
+      {!Store.collapsed && !!Store.token && <div className='nav-header'>
+        <i onClick={() => Store.currentTab = 'tasks'} className='material-icons clickable'>home</i>
+        <span onClick={() => Store.currentTab = 'tasks'} className='clickable'>tasks (18)</span>
+        <span className='clickable'>jobs (7)</span>
+        <i className='material-icons clickable'>settings</i>
+      </div>}
+      {!Store.collapsed && !!Store.token && (Store.currentTab !== 'tasks') && <div>
+        <div className={'nav-tab ' + (Store.currentTab === 'tasks' ? 'nav-tab-active' : '')} onClick={() => setTab('tasks')}>Tasks</div>
+        <div className={'nav-tab ' + (Store.currentTab === 'company' ? 'nav-tab-active' : '')} onClick={() => setTab('company')}>Company</div>
+        <div className={'nav-tab ' + (Store.currentTab === 'email' ? 'nav-tab-active' : '')} onClick={() => utils.openEmail()}>History</div>
+      </div>}
       {!Store.collapsed && !Store.token && <div className='xy-center'>
         <div className='center-container'>
           <div className='logo text-center'>(cb)</div>
           <button className='btn' onClick={()=>chrome.runtime.sendMessage({authenticate: true}, (res) => Store.token = res.token)} >Log In</button>
-          <button className='btn' onClick={collapse}>&gt;</button>      
+          <button className='btn' onClick={collapse}>&gt;</button> 
         </div>
-      </div>}
-      {!Store.collapsed && !!Store.token && <div>
-        <div className={'nav-tab ' + (Store.currentTab === 'tasks' ? 'nav-tab-active' : '')} onClick={() => setTab('tasks')}>Tasks</div>
-        <div className={'nav-tab ' + (Store.currentTab === 'company' ? 'nav-tab-active' : '')} onClick={() => setTab('company')}>Company</div>
-        <div className={'nav-tab ' + (Store.currentTab === 'email' ? 'nav-tab-active' : '')} onClick={() => utils.openEmail()}>History</div>
       </div>}
       {!Store.collapsed && !!Store.token && (Store.currentTab === 'company') && <Company />}
       {!Store.collapsed && !!Store.token && (Store.currentTab === 'tasks') && <Tasks />}
