@@ -9,7 +9,7 @@
     "tabs", "<all_urls>", "identity"
   ],
 
-  "web_accessible_resources": ["*.woff2"],
+  "web_accessible_resources": ["*.woff2", "*.png"],
 
   "content_scripts": [
     {

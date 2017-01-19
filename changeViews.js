@@ -20,9 +20,14 @@ var addTableRowListeners = function() {
   console.log('added row listeners', Store.tableRowListenersEnabled);
 };
 
+var openInbox = function() {
+  Store.googlePage = 'inbox';
+  Store.currentTab = 'tasks';
+};
+
 var addBackButtonListener = function() {
   $('.lS').on('click', function(e) {
-    Store.currentTab = 'tasks';
+    openInbox();
     if (!Store.tableRowListenersEnabled) {
       var detectTableLoad = function() {
         var table = document.getElementsByClassName('zt')[0];
@@ -54,23 +59,26 @@ var openEmail = function() {
   Store.currentContact = {};
   Store.currentJobTasks = [];
   Store.currentJobContacts = [];
-  chrome.runtime.sendMessage({
-    action: 'GET',
-    token: Store.token,
-    url: `${Store.server}/contacts/jobs/${encodeURIComponent(Store.currentEmail.senderEmail)}/${Store.userId}`
-  }, function(res) {
-    if (res.err) {
-      Store.currentContact = {};
-      console.log('error loading contact', res.err);
-    } else {
-      Store.currentContact = res.data;
-    }
-  });
-  
+  if (Store.userId) {
+    chrome.runtime.sendMessage({
+      action: 'GET',
+      token: Store.token,
+      url: `${Store.server}/contacts/jobs/${encodeURIComponent(Store.currentEmail.senderEmail)}/${Store.userId}`
+    }, function(res) {
+      if (res.err) {
+        Store.currentContact = {};
+        console.log('error loading contact', res.err);
+      } else {
+        Store.currentContact = res.data;
+      }
+    });
+  }
+  Store.googlePage = 'email';
   Store.currentTab = 'email';
 };
 
 obj.openEmail = openEmail;
+obj.openInbox = openInbox;
 obj.addBackButtonListener = addBackButtonListener;
 obj.addTableRowListeners = addTableRowListeners;
 

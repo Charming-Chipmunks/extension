@@ -23,9 +23,9 @@ import {observer} from 'mobx-react';
 
     return (
       <div>
+        <div>{jobName}</div>
         <div>{name}</div>
         <div>{Store.currentContact.contact.email}</div>
-        <div>{jobName}</div>
         <hr />
       </div>
     ); 

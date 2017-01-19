@@ -65,7 +65,7 @@ var grabEmail = function() {
       Store.currentEmail.description = e.target.value;
     };
 
-    if (Store.currentJobTasks.filter(record => record.actionSource === 'user' && record.completedTime.replace(/T/, ' ').slice(0, 19) === Store.currentEmail.time).length) {
+    if (Store.currentJobTasks.some(record => record.actionSource === 'user' && record.completedTime.replace(/T/, ' ').slice(0, 19) === Store.currentEmail.time)) {
       var emailLogged = true;
     }          
 
@@ -78,7 +78,11 @@ var grabEmail = function() {
      
         {!!Store.currentJobTasks.length && <div>History</div>}
         {!!Store.currentJobTasks.length && <div className='y-scroll'>
-          {Store.currentJobTasks.filter(record => record.actionSource === 'user').sort((a, b) => a.completedTime <= b.completedTime ? 1 : 0).map((record, i) => <Action key={i} action={record} />)}
+          {Store.currentJobTasks
+            .filter(record => record.actionSource === 'user')
+            .sort((a, b) => a.completedTime <= b.completedTime ? 1 : 0)
+            .map((record, i) => <Action key={i} action={record} />)
+          }
         </div>}
       </div>
     );
