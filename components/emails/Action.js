@@ -99,7 +99,7 @@ var timeSince = function(date) {
     }
 
     return (
-      <div className={thisEmail ? 'current-email history-item' : 'history-item'}>
+      <div className={thisEmail ? 'current-email history-item done' : 'history-item done'}>
         <i className='material-icons history-item-icon'>{iconLookup[record.type]}</i>
         <div className='header'>
           <div className='notes'>

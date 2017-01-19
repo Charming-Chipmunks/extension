@@ -40,9 +40,7 @@ var iconLookup = {
     var contactName = 'NO NAME';//Store.currentJobContacts[0].firstname + ' ' + Store.currentJobContacts[0].lastname;
 
     var descriptionLookup = {
-      create: 'Created this job',
-      like: 'Liked this job',
-      learn: 'Learned about job',
+      learn: 'Learn about the job',
       connections: 'Connected with people',
       connect: 'Connected with people',
       apply: 'Sent an application',

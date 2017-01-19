@@ -5,9 +5,11 @@ import Store from './Store.js';
 import {observer} from 'mobx-react';
 
 import Company from './Company.js';
+import Companies from './Companies.js';
 import History from './History.js';
 import Tasks from './Tasks.js';
 import Emails from './emails';
+import Settings from './Settings.js';
 import EditActionModal from './EditActionModal.js';
 
 import utils from '../changeViews.js';
@@ -28,20 +30,20 @@ var grabEmail = function() {
   Store.currentTab = 'email';
 };
 
-var collapse = function() {
-  document.getElementById('spacer').className = 'sidebar-min-width';
-  document.getElementById('ext').className = 'sidebar-min-width';
-  Store.collapsed = true;
-};
-
-var expand = function() {
-  document.getElementById('spacer').className = 'sidebar-max-width';
-  document.getElementById('ext').className = 'sidebar-max-width';
-  Store.collapsed = false;
+var toggleCollapse = function() {
+  if (Store.collapsed) {
+    document.getElementById('spacer').className = 'sidebar-max-width';
+    document.getElementById('ext').className = 'sidebar-max-width';
+    Store.collapsed = false;
+  } else {
+    document.getElementById('spacer').className = 'sidebar-min-width';
+    document.getElementById('ext').className = 'sidebar-min-width';
+    Store.collapsed = true;
+  }
 };
 
 var Sidebar = observer((props) => {
-  if (Store.token) {
+  if (Store.token && !Store.userId) {
     chrome.runtime.sendMessage({
       action: 'GET',
       url: Store.server + '/user',
@@ -51,23 +53,12 @@ var Sidebar = observer((props) => {
         alert('error:' + res.err);
       } else {
         Store.currentUserObject = res.data;
+        Store.currentUser = res.data.googleName;
         Store.userId = res.data.id;
 
         if (Store.currentTab === 'email') {
           utils.openEmail();
         }
-
-        // chrome.runtime.sendMessage({
-        //   action: 'GET',
-        //   url: Store.server + '/jobs/' + Store.userId + '/favored',
-        //   token: Store.token
-        // }, function(res) {
-        //   if (res.err) {
-        //     alert('error:' + res.err);
-        //   } else {
-        //     Store.user = res.data;
-        //   }
-        // });
 
         chrome.runtime.sendMessage({
           action: 'GET',
@@ -99,34 +90,39 @@ var Sidebar = observer((props) => {
         });
       }
     });
-
   }
 
+  var openTaskCount = Store.tasks
+    .slice()
+    .filter(record => !record.completedTime)
+    .length;
+
+  var displayOpenTaskCount = openTaskCount ? ` (${openTaskCount})` : '';
+
+  var jobCount = Store.jobs.slice().length;
+
+  var displayJobCount = jobCount ? ` (${jobCount})` : '';
+
+  console.log('current contact', Store.currentContact);
   return (
     <div className='side-container'>
       {!Store.collapsed && !!Store.token && <div className='nav-header'>
-        <i onClick={() => Store.currentTab = 'tasks'} className='material-icons clickable'>home</i>
-        <span onClick={() => Store.currentTab = 'tasks'} className='clickable'>tasks (18)</span>
-        <span className='clickable'>jobs (7)</span>
-        <i className='material-icons clickable'>settings</i>
-      </div>}
-      {!Store.collapsed && !!Store.token && (Store.currentTab !== 'tasks') && <div>
-        <div className={'nav-tab ' + (Store.currentTab === 'tasks' ? 'nav-tab-active' : '')} onClick={() => setTab('tasks')}>Tasks</div>
-        <div className={'nav-tab ' + (Store.currentTab === 'company' ? 'nav-tab-active' : '')} onClick={() => setTab('company')}>Company</div>
-        <div className={'nav-tab ' + (Store.currentTab === 'email' ? 'nav-tab-active' : '')} onClick={() => utils.openEmail()}>History</div>
+        <span onClick={() => Store.currentTab = 'tasks'} className={Store.currentTab === 'tasks' ? 'clickable active' : 'clickable'}>all tasks{displayOpenTaskCount}</span>
+        <span onClick={() => Store.currentTab = 'companies'} className={Store.currentTab === 'companies' ? 'clickable active' : 'clickable'}>all jobs{displayJobCount}</span>
+        {(Store.googlePage === 'email') && <span onClick={() => Store.currentTab = 'email'} className={Store.currentTab === 'email' ? 'clickable active' : 'clickable'}>{Store.currentContact.job ? Store.currentContact.job.company : 'new message'}</span>}
+        <i onClick={() => Store.currentTab = 'settings'} className={Store.currentTab === 'settings' ? 'material-icons clickable active' : 'material-icons clickable'}>settings</i>
       </div>}
       {!Store.collapsed && !Store.token && <div className='xy-center'>
         <div className='center-container'>
           <div className='logo text-center'>(cb)</div>
-          <button className='btn' onClick={()=>chrome.runtime.sendMessage({authenticate: true}, (res) => Store.token = res.token)} >Log In</button>
-          <button className='btn' onClick={collapse}>&gt;</button> 
+          <button className='btn light-blue darken-3' onClick={() => chrome.runtime.sendMessage({authenticate: true}, (res) => Store.token = res.token)} >Log In</button>
         </div>
       </div>}
-      {!Store.collapsed && !!Store.token && (Store.currentTab === 'company') && <Company />}
       {!Store.collapsed && !!Store.token && (Store.currentTab === 'tasks') && <Tasks />}
+      {!Store.collapsed && !!Store.token && (Store.currentTab === 'companies') && <Companies />}
       {!Store.collapsed && !!Store.token && (Store.currentTab === 'email') && <Emails />}
-      {!Store.collapsed && !!Store.token && <button className='btn collapse' onClick={collapse}>&gt;</button>}
-      {Store.collapsed && <button className='btn collapse' onClick={expand}>&lt;</button>}
+      {!Store.collapsed && !!Store.token && (Store.currentTab === 'settings') && <Settings />}
+      <div className='collapse clickable' onClick={toggleCollapse}>{Store.collapsed ? '<<' : '>>'}</div>
     </div>
   );
 });

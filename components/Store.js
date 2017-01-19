@@ -17,6 +17,8 @@ class Store {
 
       tableRowListenersEnabled: false,
 
+      googlePage: '',
+
       currentTab: 'tasks',
 
       currentEmail: {},

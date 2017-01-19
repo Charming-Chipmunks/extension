@@ -4,11 +4,13 @@ import ReactDOM from 'react-dom';
 import Store from '../Store.js';
 import mobx from 'mobx';
 import {observer} from 'mobx-react';
+import utils from '../../changeViews.js';
 // import $ from 'jquery';
 
 @observer class NewEmailForm extends React.Component {
   constructor(props) {
     super(props)
+    this.addActionHandler = this.addActionHandler.bind(this);
   }
 
   addAction() {
@@ -37,6 +39,7 @@ import {observer} from 'mobx-react';
   };
 
   addActionHandler() {
+    console.log('Im being called');
     if (!Store.currentContact.contact) {
       var name = Store.currentEmail.senderName.split(' ');
       document.getElementsByClassName('')
@@ -86,7 +89,7 @@ import {observer} from 'mobx-react';
             <option>Rejection</option>
           </select>
         </div>}
-        <button className='btn' onClick={this.addActionHandler}>Submit</button>
+        <button className='btn light-blue darken-3' onClick={this.addActionHandler}>Submit</button>
       </div>
     ); 
   }

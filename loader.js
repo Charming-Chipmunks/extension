@@ -41,6 +41,7 @@ var detectLoad = function() {
     var fromDiv = document.getElementsByClassName('gD')[0];
     if (table) {
       utils.addTableRowListeners();
+      utils.openInbox();
     } else if (fromDiv) {
       utils.openEmail();
     }
