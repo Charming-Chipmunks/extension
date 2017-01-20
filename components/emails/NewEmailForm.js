@@ -39,7 +39,6 @@ import utils from '../../changeViews.js';
   };
 
   addActionHandler() {
-    console.log('Im being called');
     if (!Store.currentContact.contact) {
       var name = Store.currentEmail.senderName.split(' ');
       document.getElementsByClassName('')

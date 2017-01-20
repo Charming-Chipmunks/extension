@@ -5,8 +5,8 @@ import { extendObservable } from 'mobx';
 class Store {
   constructor() {
     extendObservable(this, {
-      // server: 'http://jobz.mooo.com:3000',
-      server: 'http://127.0.0.1:3000',
+      server: 'http://jobz.mooo.com:3000',
+      // server: 'http://127.0.0.1:3000',
       currentUserObject: {},
       currentUser: 'my user',
       userId: '',
