@@ -8,22 +8,6 @@ import Action from './Action.js';
 
 var Tasks = observer((props) => {
   var jobs = Store.jobs.slice().map(record => mobx.toJS(record));
-  var now = new Date();
-
-  // var markCompleted = function(record) {
-  //   //TODO: update database
-  //   var i = tasks.indexOf(record);
-  //   var newTask = Object.create(record);
-  //   newTask.completedTime = new Date().toISOString().slice(0, 19).replace(/T/, ' ');
-  //   //Store.tasks[i] = newTask;
-
-  //   chrome.runtime.sendMessage({
-  //     action: 'PUT',
-  //     url: Store.server + '/actions/' + Store.userId + '/' + record.id,
-  //     token: Store.token
-  //   }, function(res) {
-  //   });
-  // };
 
   return (
     <div>

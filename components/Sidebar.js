@@ -4,15 +4,13 @@ import ReactDOM from 'react-dom';
 import Store from './Store.js';
 import {observer} from 'mobx-react';
 
-import Company from './Company.js';
-import Companies from './Companies.js';
-import History from './History.js';
 import Tasks from './Tasks.js';
+import Companies from './Companies.js';
 import Emails from './emails';
 import Settings from './Settings.js';
-import EditActionModal from './EditActionModal.js';
 
 import utils from '../changeViews.js';
+
 
 var setTab = function(tab) {
   Store.currentTab = tab;
@@ -50,7 +48,7 @@ var Sidebar = observer((props) => {
       token: Store.token
     }, function(res) {
       if (res.err) {
-        alert('error:' + res.err);
+        console.log('user error:' + res.err);
       } else {
         Store.currentUserObject = res.data;
         Store.currentUser = res.data.googleName;
@@ -103,25 +101,31 @@ var Sidebar = observer((props) => {
 
   var displayJobCount = jobCount ? ` (${jobCount})` : '';
 
-  console.log('current contact', Store.currentContact);
+  var MainComponents = {
+    tasks: <Tasks />,
+    email: <Emails />,
+    companies: <Companies />,
+    settings: <Settings />
+  };
+
   return (
     <div className='side-container'>
+      {!Store.collapsed && !Store.token && <div className='xy-center'>
+        <div className='center-container'>
+          <div className='logo text-center'>(cb)</div>
+          <button className='btn light-blue darken-3' onClick={() => chrome.runtime.sendMessage({authenticate: true}, res => Store.token = res.token)} >Log In</button>
+        </div>
+      </div>}
+
       {!Store.collapsed && !!Store.token && <div className='nav-header'>
         <span onClick={() => Store.currentTab = 'tasks'} className={Store.currentTab === 'tasks' ? 'clickable active' : 'clickable'}>all tasks{displayOpenTaskCount}</span>
         <span onClick={() => Store.currentTab = 'companies'} className={Store.currentTab === 'companies' ? 'clickable active' : 'clickable'}>all jobs{displayJobCount}</span>
         {(Store.googlePage === 'email') && <span onClick={() => Store.currentTab = 'email'} className={Store.currentTab === 'email' ? 'clickable active' : 'clickable'}>{Store.currentContact.job ? Store.currentContact.job.company : 'new message'}</span>}
         <i onClick={() => Store.currentTab = 'settings'} className={Store.currentTab === 'settings' ? 'material-icons clickable active' : 'material-icons clickable'}>settings</i>
       </div>}
-      {!Store.collapsed && !Store.token && <div className='xy-center'>
-        <div className='center-container'>
-          <div className='logo text-center'>(cb)</div>
-          <button className='btn light-blue darken-3' onClick={() => chrome.runtime.sendMessage({authenticate: true}, (res) => Store.token = res.token)} >Log In</button>
-        </div>
-      </div>}
-      {!Store.collapsed && !!Store.token && (Store.currentTab === 'tasks') && <Tasks />}
-      {!Store.collapsed && !!Store.token && (Store.currentTab === 'companies') && <Companies />}
-      {!Store.collapsed && !!Store.token && (Store.currentTab === 'email') && <Emails />}
-      {!Store.collapsed && !!Store.token && (Store.currentTab === 'settings') && <Settings />}
+
+      {!Store.collapsed && !!Store.token && MainComponents[Store.currentTab]}
+
       <div className='collapse clickable' onClick={toggleCollapse}>{Store.collapsed ? '<<' : '>>'}</div>
     </div>
   );

@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom';
 
 import Store from '../Store.js';
 import {observer} from 'mobx-react';
-import utils from '../../changeViews.js';
-import ReceivedEmailAction from './ReceivedEmailAction.js';
-import Modal from '../Modal.js';
+
 import Action from './Action.js';
 import NewContactForm from './NewContactForm.js';
 import ExistingContact from './ExistingContact.js';
 import NewEmailForm from './NewEmailForm.js';
-// import $ from 'jquery';
+
+import utils from '../../changeViews.js';
 
 var grabEmail = function() {
   var fromDiv = document.getElementsByClassName('gD')[0];
@@ -40,8 +39,8 @@ var grabEmail = function() {
         if (res.err) {
           console.log('error loading job contacts', err);
         } else {
-          console.log('job contacts', res.data);
           Store.currentJobContacts = res.data;
+          Store.jobContacts[Store.currentContact.job.id] = res.data;
         }
       });
     }
@@ -56,7 +55,7 @@ var grabEmail = function() {
           console.log('error getting job actions', res.err);
         } else {
           Store.currentJobTasks = res.data;
-          console.log(Store.currentJobTasks);
+          Store.jobTasks[Store.currentContact.job.id] = res.data;
         }
       });
     }
@@ -72,8 +71,7 @@ var grabEmail = function() {
     return (
       <div>
         <div>{Store.currentEmail.warning}</div>
-        {!Store.currentContact.contact && <NewContactForm />}
-        {!!Store.currentContact.contact && <ExistingContact />}
+        {!Store.currentContact.contact ? <NewContactForm /> : <ExistingContact />}
         {!emailLogged && <NewEmailForm />}
      
         {!!Store.currentJobTasks.length && <div>History</div>}

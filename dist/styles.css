@@ -1,3 +1,9 @@
+/************************
+*                       *
+*   SIDEBAR STRUCTURE   *
+*                       *
+************************/
+
 #spacer{
   right: 0;
   top: 0;
@@ -33,9 +39,12 @@
   height: 100%;
 }
 
-.clickable {
-  cursor: pointer;
-}
+
+/************************
+*                       *
+*        HEADER         *
+*                       *
+************************/
 
 .nav-header {
   background-color: #0277bd;
@@ -47,35 +56,12 @@
   padding-top: 3px;
 }
 
-.settings {
-  text-align: right;
-}
 
 .nav-header * {
   text-align: center;
   padding: 6px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-}
-
-.nav-header span {
-}
-
-/*.nav-header .clickable:first-child {
-  border-top-left-radius: 0px;
-}
-
-.nav-header .clickable:last-child {
-  border-top-right-radius: 0px;
-}*/
-
-
-.nav-header span {
-  /*flex-grow: 2;*/
-  flex-grow: 1;
-}
-
-.nav-header i {
   flex-grow: 1;
 }
 
@@ -84,29 +70,33 @@
   color: black;
 }
 
-/*.nav-header :hover {
-  background-color: white;
-  color: black;
-}*/
 
-/*.nav-tab {
-  display: inline-block;
-  width: 100px;
-  text-align: center;
-  border: 1px solid black;
+
+
+
+.clickable {
   cursor: pointer;
 }
 
-.nav-tab:hover {
-  background-color: rgb(43, 187, 173);
-  color: white;
-} 
-.nav-tab-active {
-  background-color: rgb(38, 166, 154);
-  color: white;
+.settings {
+  text-align: right;
 }
-*/
 
+.y3 {
+  display: none;
+}
+
+.y-scroll { 
+  overflow-y: auto;
+}
+
+
+/************************
+*                       *
+* TASKS/ACTIONS/HISTORY *
+*                       *
+************************/
+/*
 .task-completed{
   font-style: italic;
 }
@@ -119,21 +109,13 @@
   color: green;
 }
 
-.y3 {
-  display: none;
-}
 
-
-
-.y-scroll { 
-  overflow-y: auto;
-}
 
 .task-list {
   position: absolute;
   top: 70px;
   bottom: 60px;
-}
+}*/
 
 .xy-center {
   display: inline-block;
@@ -147,6 +129,12 @@
 .text-center {
   text-align: center;
 }
+
+/************************
+*                       *
+*      LOGIN FORM       *
+*                       *
+************************/
 
 .logo {
   font-size: 20px;
@@ -162,9 +150,6 @@
   display: block;
 }
 
-.h3 {
-  font-size: 12px;
-}
 
 .collapse {
   width:30px; height:30px;
@@ -187,6 +172,12 @@
 .hide {
   display: none;
 }
+
+/************************
+*                       *
+* TASKS/ACTIONS/HISTORY *
+*                       *
+************************/
 
 .history-item {
   padding: 6px;
@@ -226,16 +217,17 @@
   text-align: right;
 }
 
-.history-item-done {
-  position: absolute;
-  bottom: 0px;
-  right: 30px;
-}
-
-.history-item-edit {
+/*.history-item-edit {
   position: absolute;
   bottom: 0px;
   right: 0px;
+}
+*/
+.history-item-done {
+  position: absolute;
+  bottom: 0px;
+  /*right: 30px;*/
+  right: 0;
 }
 
 .history-item.overdue {
