@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Store from './components/Store.js';
+import mobx from 'mobx';
 
 var obj = {};
 
@@ -17,7 +18,6 @@ var addTableRowListeners = function() {
     detectEmailLoad();
   }.bind(this));
   Store.tableRowListenersEnabled = true;
-  console.log('added row listeners', Store.tableRowListenersEnabled);
 };
 
 var openInbox = function() {
@@ -33,7 +33,6 @@ var addBackButtonListener = function() {
         var table = document.getElementsByClassName('zt')[0];
         if (table) {
           addTableRowListeners(table);
-          console.log('done');
         } else {
           setTimeout(detectTableLoad, 100);
         }
@@ -44,7 +43,6 @@ var addBackButtonListener = function() {
 };
 
 var openEmail = function() {
-  console.log('opening email');
   var fromDiv = document.getElementsByClassName('gD')[0];
   addBackButtonListener();
 
@@ -54,25 +52,43 @@ var openEmail = function() {
     senderName: fromDiv.innerHTML,
     time: new Date(timeSpans[timeSpans.length - 1].title.replace(/at /, ' ')).toDateTime()
   };
-  console.log(new Date(timeSpans[timeSpans.length - 1].title.replace(/at /, ' ')));
   
+  //Reset data regarding the currently selected job, which is changing.
   Store.currentContact = {};
   Store.currentJobTasks = [];
   Store.currentJobContacts = [];
+
+  //If cached data exists, use it to populate the recently emptied datasets
   if (Store.userId) {
-    chrome.runtime.sendMessage({
-      action: 'GET',
-      token: Store.token,
-      url: `${Store.server}/contacts/jobs/${encodeURIComponent(Store.currentEmail.senderEmail)}/${Store.userId}`
-    }, function(res) {
-      if (res.err) {
-        Store.currentContact = {};
-        console.log('error loading contact', res.err);
-      } else {
-        Store.currentContact = res.data;
+    if (Store.contacts[Store.currentEmail.senderEmail]) {
+      Store.currentContact = Store.contacts[Store.currentEmail.senderEmail];
+    }
+    if (Store.currentContact.job) {
+      if (Store.jobContacts[Store.currentContact.job.id]) {
+        Store.currentJobContacts = Store.jobContacts[Store.currentContact.job.id];
       }
-    });
+      if (Store.jobTasks[Store.currentContact.job.id]) {
+        Store.currentJobTasks = Store.jobTasks[Store.currentContact.job.id];
+      }
+    }
+
+    //If cached data was not available, fetch it from the server.
+    if (!Store.currentContact.job) {
+      chrome.runtime.sendMessage({
+        action: 'GET',
+        token: Store.token,
+        url: `${Store.server}/contacts/jobs/${encodeURIComponent(Store.currentEmail.senderEmail)}/${Store.userId}`
+      }, function(res) {
+        if (res.err) {
+          Store.currentContact = {};
+        } else {
+          Store.currentContact = res.data;
+          Store.contacts[Store.currentEmail.senderEmail] = res.data;
+        }
+      });
+    }
   }
+  
   Store.googlePage = 'email';
   Store.currentTab = 'email';
 };

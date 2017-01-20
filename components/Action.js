@@ -87,7 +87,6 @@ var iconLookup = {
           <div className='body'>
             {record.company}: {Store.jobsLookupById[record.JobId] && Store.jobsLookupById[record.JobId].jobTitle}
             <i className='material-icons history-item-done clickable' onClick={this.props.completed.bind(this, record)}>done</i>
-            <i className='material-icons history-item-edit clickable'>edit</i>
           </div>
         </div>
       </div>

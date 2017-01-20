@@ -11,17 +11,27 @@ var Tasks = observer((props) => {
   var now = new Date();
 
   var markCompleted = function(record) {
-    //TODO: update database
     var i = tasks.indexOf(record);
     var newTask = Object.create(record);
     newTask.completedTime = new Date().toISOString().slice(0, 19).replace(/T/, ' ');
-    //Store.tasks[i] = newTask;
+    Store.tasks[i] = newTask;
 
     chrome.runtime.sendMessage({
       action: 'PUT',
       url: Store.server + '/actions/' + Store.userId + '/' + record.id,
       token: Store.token
     }, function(res) {
+      chrome.runtime.sendMessage({
+        action: 'GET',
+        url: Store.server + '/actions/' + Store.userId,
+        token: Store.token
+      }, function(res) {
+        if (res.err) {
+          alert('error:' + res.err);
+        } else {
+          Store.tasks = res.data;
+        }
+      });
     });
   };
 

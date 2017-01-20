@@ -63,7 +63,11 @@ var timeSince = function(date) {
     var record = this.props.action;
 
     //TODO: use contact associated with the current action.
-    var contactName = Store.currentJobContacts[0].firstname + ' ' + Store.currentJobContacts[0].lastname;
+    if (Store.currentJobContacts.length) {
+      var contactName = Store.currentJobContacts[0].firstname + ' ' + Store.currentJobContacts[0].lastname;
+    } else {
+      var contactName = '';
+    }
 
     var descriptionLookup = {
       create: 'Created this job',
