@@ -6,6 +6,30 @@ import mobx from 'mobx';
 import {observer} from 'mobx-react';
 import utils from '../../changeViews.js';
 // import $ from 'jquery';
+var addAction = function() {
+  if (Store.currentContact.job) {
+    Store.currentEmail.company = Store.currentContact.job.company;
+    Store.currentEmail.jobId = Store.currentContact.job.id;
+  }
+  chrome.runtime.sendMessage({
+    action: 'POST',
+    url: Store.server + '/actions',
+    token: Store.token,
+    data: {
+      type: 'receivedEmail',
+      company: Store.currentEmail.company,
+      description: Store.currentEmail.description,
+      actionSource: 'user',
+      completedTime: Store.currentEmail.time,
+      jobId: Store.currentEmail.jobId,
+      userId: Store.userId,
+      contactId: Store.currentContact.contact.id
+    }
+  }, function(res) {
+    utils.openEmail();
+  });
+  Store.currentEmail;
+};
 
 @observer class NewEmailForm extends React.Component {
   constructor(props) {
@@ -13,30 +37,6 @@ import utils from '../../changeViews.js';
     this.addActionHandler = this.addActionHandler.bind(this);
   }
 
-  addAction() {
-    if (Store.currentContact.job) {
-      Store.currentEmail.company = Store.currentContact.job.company;
-      Store.currentEmail.jobId = Store.currentContact.job.id;
-    }
-    chrome.runtime.sendMessage({
-      action: 'POST',
-      url: Store.server + '/actions',
-      token: Store.token,
-      data: {
-        type: 'receivedEmail',
-        company: Store.currentEmail.company,
-        description: Store.currentEmail.description,
-        actionSource: 'user',
-        completedTime: Store.currentEmail.time,
-        jobId: Store.currentEmail.jobId,
-        userId: Store.userId,
-        contactId: Store.currentContact.contact.id
-      }
-    }, function(res) {
-      utils.openEmail();
-    });
-    Store.currentEmail;
-  };
 
   addActionHandler() {
     if (!Store.currentContact.contact) {
@@ -55,12 +55,24 @@ import utils from '../../changeViews.js';
         if (res.err) {
           console.log('Error adding user', res.err);
         } else {
-          Store.currentContact.contact = res.data;
-          this.addAction();
+          // Store.currentContact.contact = res.data;
+          chrome.runtime.sendMessage({
+            action: 'GET',
+            token: Store.token,
+            url: `${Store.server}/contacts/jobs/${encodeURIComponent(Store.currentEmail.senderEmail)}/${Store.userId}`
+          }, function(res) {
+            if (res.err) {
+              Store.currentContact = {};
+            } else {
+              Store.currentContact = res.data;
+              Store.contacts[Store.currentEmail.senderEmail] = res.data;
+            }
+          });
+          addAction();
         }
       });
     } else {
-      this.addAction();
+      addAction();
     }
   };
 
